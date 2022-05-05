@@ -5,9 +5,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Recipe(
-    val id: Int? = null,
+    val pk: Int? = null,
     val title: String? = null,
     val publisher: String? = null,
+    val rating: Int? = null,
     val featuredImage: String? = null,
     val sourceUrl: String? = null,
     val description: String? = null,
