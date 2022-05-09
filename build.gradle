@@ -3,6 +3,10 @@ buildscript {
         compose_version = '1.0.1'
         accompanist_version = '0.21.4-beta'
     }
+    repositories {
+        google()
+        mavenCentral()
+    }
     dependencies {
         def hilt =  "2.38.1"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt"
