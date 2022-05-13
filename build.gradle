@@ -1,6 +1,7 @@
 buildscript {
+    ext.kotlin_version = '1.7.0-Beta'
     ext {
-        compose_version = '1.0.1'
+        compose_version = '1.2.0-beta01'
         accompanist_version = '0.21.4-beta'
     }
     repositories {
@@ -8,16 +9,17 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        def hilt =  "2.38.1"
+        def hilt = '2.40.1'
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
     }
 }
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules
 plugins {
-    id 'com.android.application' version '7.1.3' apply false
-    id 'com.android.library' version '7.1.3' apply false
+    id 'com.android.application' version '7.2.0' apply false
+    id 'com.android.library' version '7.2.0' apply false
     id 'org.jetbrains.kotlin.android' version '1.5.21' apply false
 }
 
