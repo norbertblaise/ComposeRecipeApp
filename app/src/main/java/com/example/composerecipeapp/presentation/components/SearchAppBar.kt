@@ -1,31 +1,37 @@
 package com.example.composerecipeapp.presentation.components
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import com.example.composerecipeapp.presentation.ui.recipe_list.FoodCategory
 import com.example.composerecipeapp.presentation.ui.recipe_list.getAllFoodCategories
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchAppBar(
     query: String,
-    onQueryChange: (String) -> Unit,
+    onQueryChanged: (String) -> Unit,
     onExecuteSearch: () -> Unit,
     scrollPosition: Int,
     selectedCategory: FoodCategory?,
@@ -42,6 +48,7 @@ fun SearchAppBar(
             Row(
                 modifier = Modifier.fillMaxWidth(),
             ) {
+                val keyboardController = LocalSoftwareKeyboardController.current
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth(.9f)
@@ -57,33 +64,46 @@ fun SearchAppBar(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    leadingIcon = {
-                        Icon(Icons.Filled.Search)
-                    },
-                    onImeActionPerformed = { action, softKeyboardController ->
-                        if (action == ImeAction.Done) {
+                    keyboardActions = KeyboardActions {
                             onExecuteSearch()
-                            softKeyboardController?.hideSoftwareKeyboard()
-                        }
+                        keyboardController?.hide()
                     },
-                    textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
-                    backgroundColor = MaterialTheme.colors.surface
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Search,
+//                            tint = colors.onSurface,
+                            contentDescription = "Search Icon"
+                        )
+                    },
+                    textStyle = TextStyle(color = colors.onSurface),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = colors.surface
+                    )
                 )
 
-            }
-            val scrollState = rememberLazyListState()
 
-            LazyRow(
+            }
+            val scrollState = rememberScrollState()
+            val scope = rememberCoroutineScope()
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, bottom = 8.dp),
-                state = scrollState
+                    .padding(start = 8.dp, bottom = 8.dp)
+                    .horizontalScroll(scrollState)
+
             ) {
-                lifecycleScope.launch {
-                    scrollState.scrollToItem(
-                        scrollPosition
-                    )
-                }
+//                scope.launch {
+//                    scrollState.scrollTo(
+//                        scrollPosition
+//                    )
+//                }
+                LaunchedEffect(key1 = scrollState, block = {
+                    scope.launch {
+                        scrollState.scrollTo(
+                            scrollPosition
+                        )
+                    }
+                })
 
                 for (category in getAllFoodCategories()) {
                     FoodCategoryChip(
@@ -92,7 +112,7 @@ fun SearchAppBar(
                         onSelectedCategoryChanged = {
                             onSelectedCategoryChanged(it)
                             onCategoryChangePosition(
-                                getAllFoodCategories().indexOf(selectedCategory)
+                             scrollState.value
                             )
                         },
                         onExecuteSearch = {

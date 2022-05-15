@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -27,15 +26,16 @@ class RecipeListFragment : Fragment() {
             setContent {
                 val recipes = viewModel.recipes.value
                 val query =
-                    remember { viewModel.query.value }
+                     viewModel.query.value
 
+                val categoryScrollPosition = viewModel.categoryScrollPosition
                 val selectedCategory = viewModel.selectedCategory.value
                 Column {
                     SearchAppBar(
                         query = query,
-                        onQueryChange = viewModel::onQueryChanged,
+                        onQueryChanged = viewModel::onQueryChanged,
                         onExecuteSearch = viewModel::newSearch,
-                        scrollPosition = viewModel.categoryScrollPosition,
+                        scrollPosition = categoryScrollPosition,
                         selectedCategory = selectedCategory,
                         onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged ,
                         onCategoryChangePosition = viewModel::onCategoryChangePosition
